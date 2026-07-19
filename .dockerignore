@@ -1,4 +1,6 @@
 venv/
+env/
+ENV/
 __pycache__/
 *.pyc
 *.pyo
@@ -9,9 +11,10 @@ __pycache__/
 *.egg-info/
 dist/
 build/
-.env
 .git
 .gitignore
+.env
+.env.local
 .DS_Store
 *.db
 *.sqlite3
@@ -19,3 +22,6 @@ build/
 media/
 staticfiles/
 .DS_Store
+*.md
+.vscode/
+.idea/
