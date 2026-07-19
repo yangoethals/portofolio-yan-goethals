@@ -1,0 +1,119 @@
+{% extends 'client/base.html' %}
+{% load static %}
+
+{% block title %}{{ project.title }} - YAN GOETHALS{% endblock %}
+
+{% block content %}
+<section class="project-detail-section py-5">
+    <div class="container">
+        <nav aria-label="breadcrumb" data-aos="fade-up">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'core:home' %}">Accueil</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'projects:project_list' %}">Projets</a></li>
+                <li class="breadcrumb-item active">{{ project.title }}</li>
+            </ol>
+        </nav>
+        
+        <div class="row">
+            <div class="col-lg-8" data-aos="fade-right">
+                <h1 class="display-4 mb-3">{{ project.title }}</h1>
+                {% if project.subtitle %}
+                    <h5 class="text-muted mb-4">{{ project.subtitle }}</h5>
+                {% endif %}
+                
+                <div class="project-status mb-3">
+                    <span class="badge {% if project.status == 'completed' %}bg-success{% elif project.status == 'in_progress' %}bg-warning{% else %}bg-info{% endif %}">
+                        {{ project.get_status_display }}
+                    </span>
+                </div>
+                
+                {% if project.image %}
+                    <img src="{{ project.image.url }}" alt="{{ project.title }}" class="img-fluid rounded shadow-lg mb-4">
+                {% endif %}
+                
+                <div class="project-description">
+                    {{ project.description|safe }}
+                </div>
+                
+                <div class="tech-tags mt-4">
+                    <h6>Technologies utilisées :</h6>
+                    {% for tech in project.technologies.all %}
+                        <span class="badge bg-secondary me-1">{{ tech.name }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="col-lg-4" data-aos="fade-left">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="fas fa-info-circle"></i> Informations</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled">
+                            {% if project.video %}
+                                <li class="mb-3">
+                                    <i class="fas fa-video text-primary"></i>
+                                    <a href="{{ project.video.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                        Télécharger la vidéo
+                                    </a>
+                                </li>
+                            {% endif %}
+                            {% if project.video_url %}
+                                <li class="mb-3">
+                                    <i class="fab fa-youtube text-danger"></i>
+                                    <a href="{{ project.video_url }}" target="_blank" class="btn btn-sm btn-outline-danger">
+                                        Voir la vidéo
+                                    </a>
+                                </li>
+                            {% endif %}
+                            {% if project.github_link %}
+                                <li class="mb-3">
+                                    <i class="fab fa-github"></i>
+                                    <a href="{{ project.github_link }}" target="_blank" class="btn btn-sm btn-dark">
+                                        Code source
+                                    </a>
+                                </li>
+                            {% endif %}
+                            {% if project.demo_link %}
+                                <li class="mb-3">
+                                    <i class="fas fa-external-link-alt text-success"></i>
+                                    <a href="{{ project.demo_link }}" target="_blank" class="btn btn-sm btn-success">
+                                        Démo en ligne
+                                    </a>
+                                </li>
+                            {% endif %}
+                            <li class="mb-2">
+                                <i class="fas fa-calendar-alt"></i>
+                                <strong>Créé le :</strong> {{ project.created_at|date:"d/m/Y" }}
+                            </li>
+                            <li>
+                                <i class="fas fa-edit"></i>
+                                <strong>Mis à jour :</strong> {{ project.updated_at|date:"d/m/Y" }}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Actions admin -->
+                {% if user.is_authenticated and user.is_superuser %}
+                    <div class="card shadow mt-3">
+                        <div class="card-header bg-warning">
+                            <h5 class="mb-0"><i class="fas fa-cog"></i> Administration</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-grid gap-2">
+                                <a href="{% url 'projects:project_update' project.id %}" class="btn btn-warning">
+                                    <i class="fas fa-edit"></i> Modifier
+                                </a>
+                                <a href="{% url 'projects:project_delete' project.id %}" class="btn btn-danger">
+                                    <i class="fas fa-trash"></i> Supprimer
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Blog - YAN GOETHALS{% endblock %}
+
+{% block content %}
+<section class="blog-section py-5">
+    <div class="container">
+        <h1 class="text-center mb-5" data-aos="fade-up">
+            <i class="fas fa-blog"></i> Mon Blog
+        </h1>
+        
+        <div class="row g-4">
+            {% for post in posts %}
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="{{ forloop.counter|add:'50' }}">
+                    <div class="blog-card">
+                        <div class="blog-card-image">
+                            {% if post.featured_image %}
+                                <img src="{{ post.featured_image.url }}" alt="{{ post.title }}" class="img-fluid">
+                            {% else %}
+                                <img src="{% static 'img/blog-placeholder.jpg' %}" alt="{{ post.title }}" class="img-fluid">
+                            {% endif %}
+                            <span class="badge bg-primary position-absolute top-0 start-0 m-2">{{ post.category }}</span>
+                        </div>
+                        <div class="blog-card-body">
+                            <h5>{{ post.title }}</h5>
+                            <p class="text-muted">{{ post.excerpt|truncatewords:15 }}</p>
+                            <div class="blog-meta">
+                                <small class="text-muted">
+                                    <i class="fas fa-user"></i> {{ post.author.get_full_name|default:post.author.username }}
+                                </small>
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar"></i> {{ post.published_at|date:"d/m/Y" }}
+                                </small>
+                                <small class="text-muted">
+                                    <i class="fas fa-eye"></i> {{ post.views }}
+                                </small>
+                            </div>
+                            <a href="{% url 'blog:post_detail' post.slug %}" class="btn btn-primary btn-sm mt-3">
+                                Lire la suite <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12 text-center">
+                    <p class="text-muted">Aucun article pour le moment</p>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'admin:blog_post_add' %}" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Ajouter un article
+                        </a>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Pagination -->
+        {% if is_paginated %}
+            <div class="row mt-4" data-aos="fade-up">
+                <div class="col-12">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-center">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            
+                            {% for num in page_obj.paginator.page_range %}
+                                {% if page_obj.number == num %}
+                                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

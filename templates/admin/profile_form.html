@@ -1,0 +1,45 @@
+{% extends 'admin/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block title %}Modifier le profil - YAN GOETHALS{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5><i class="fas fa-user-edit"></i> Modifier mon profil</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-4 text-center">
+                            {% if profile.photo %}
+                                <img src="{{ profile.photo.url }}" alt="Photo actuelle" class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover; border: 3px solid #007bff;">
+                            {% else %}
+                                <i class="fas fa-user-circle fa-8x text-primary mb-3"></i>
+                            {% endif %}
+                            <p class="text-muted">Photo actuelle</p>
+                        </div>
+                        <div class="col-md-8">
+                            {{ form|crispy }}
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-3">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save"></i> Enregistrer les modifications
+                        </button>
+                        <a href="{% url 'core_admin:dashboard' %}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Annuler
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

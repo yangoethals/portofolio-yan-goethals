@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}À propos - YAN GOETHALS{% endblock %}
+
+{% block content %}
+<section class="about-section py-5">
+    <div class="container">
+        <h1 class="text-center mb-5" data-aos="fade-up">À propos de moi</h1>
+        
+        <div class="row">
+            <div class="col-lg-4" data-aos="fade-right">
+                {% if site_profile and site_profile.photo %}
+                    <img src="{{ site_profile.photo.url }}" alt="Profile" class="img-fluid rounded-circle shadow-lg">
+                {% else %}
+                    <div class="text-center">
+                        <i class="fas fa-user-circle fa-10x text-primary"></i>
+                    </div>
+                {% endif %}
+                <div class="mt-4">
+                    <h4>Informations</h4>
+                    <ul class="list-unstyled">
+                        {% if site_profile %}
+                            <li><i class="fas fa-map-marker-alt"></i> {{ site_profile.location }}</li>
+                            <li><i class="fas fa-envelope"></i> {{ site_profile.email }}</li>
+                            <li><i class="fas fa-phone"></i> {{ site_profile.phone }}</li>
+                        {% endif %}
+                        <li><i class="fas fa-graduation-cap"></i> Network & System Engineering</li>
+                    </ul>
+                    <div class="social-links mt-3">
+                        {% if site_profile %}
+                            {% if site_profile.github %}<a href="{{ site_profile.github }}" target="_blank" class="btn btn-dark btn-sm"><i class="fab fa-github"></i></a>{% endif %}
+                            {% if site_profile.linkedin %}<a href="{{ site_profile.linkedin }}" target="_blank" class="btn btn-primary btn-sm"><i class="fab fa-linkedin"></i></a>{% endif %}
+                            {% if site_profile.twitter %}<a href="{{ site_profile.twitter }}" target="_blank" class="btn btn-info btn-sm"><i class="fab fa-twitter"></i></a>{% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-8" data-aos="fade-left">
+                <div class="about-content">
+                    <h3>Bio</h3>
+                    <p>{% if site_profile %}{{ site_profile.bio }}{% else %}Je suis YAN GOETHALS, un passionné de réseaux et systèmes avec une expertise en développement Python et IoT. Mon parcours combine l'ingénierie réseau traditionnelle avec les technologies modernes de développement.{% endif %}</p>
+                    
+                    <h3 class="mt-5">Compétences</h3>
+                    <div class="row">
+                        {% for skill in skills %}
+                            <div class="col-md-6 mb-3">
+                                <div class="skill-item">
+                                    <div class="d-flex justify-content-between">
+                                        <span>
+                                            {% if skill.icon %}
+                                                <i class="{{ skill.icon }}"></i>
+                                            {% endif %}
+                                            {{ skill.name }}
+                                        </span>
+                                        <span>{{ skill.level }}%</span>
+                                    </div>
+                                    <div class="progress">
+                                        <div class="progress-bar" style="width: {{ skill.level }}%; background: linear-gradient(45deg, #6c63ff, #00bcd4);"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <p class="text-muted">Aucune compétence disponible</p>
+                        {% endfor %}
+                    </div>
+                    
+                    <!-- Quick Stats -->
+                    <div class="row mt-5">
+                        <div class="col-md-4">
+                            <div class="stat-box text-center p-3 bg-light rounded">
+                                <h3 class="text-primary">{{ certificates.count }}</h3>
+                                <p>Certifications</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stat-box text-center p-3 bg-light rounded">
+                                <h3 class="text-success">{{ badges.count }}</h3>
+                                <p>Badges</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stat-box text-center p-3 bg-light rounded">
+                                <h3 class="text-info">{{ skills.count }}</h3>
+                                <p>Compétences</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

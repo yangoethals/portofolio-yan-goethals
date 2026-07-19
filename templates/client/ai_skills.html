@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}IA & Machine Learning - YAN GOETHALS{% endblock %}
+
+{% block content %}
+<section class="skills-section py-5">
+    <div class="container">
+        <h1 class="text-center mb-5" data-aos="fade-up">
+            <i class="fas fa-robot"></i> Intelligence Artificielle & Machine Learning
+        </h1>
+        
+        <div class="row">
+            {% for skill in ai_skills %}
+                <div class="col-md-6 col-lg-4 mb-4" data-aos="fade-up" data-aos-delay="{{ forloop.counter|add:'50' }}">
+                    <div class="skill-card">
+                        <div class="skill-card-header">
+                            {% if skill.icon %}
+                                <i class="{{ skill.icon }} fa-2x text-success"></i>
+                            {% else %}
+                                <i class="fas fa-brain fa-2x text-success"></i>
+                            {% endif %}
+                            <h5 class="mt-2">{{ skill.name }}</h5>
+                            <span class="badge bg-info">{{ skill.get_category_display }}</span>
+                        </div>
+                        <div class="skill-card-body">
+                            <p class="text-muted">{{ skill.description }}</p>
+                            <div class="skill-progress">
+                                <div class="d-flex justify-content-between">
+                                    <span>Niveau</span>
+                                    <span>{{ skill.level }}%</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: {{ skill.level }}%; background: linear-gradient(45deg, #28a745, #20c997);"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12 text-center">
+                    <p class="text-muted">Aucune compétence IA disponible</p>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'core:ai_skill_add' %}" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Ajouter une compétence
+                        </a>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+        
+        {% if user.is_authenticated %}
+            <div class="text-center mt-4">
+                <a href="{% url 'core:ai_skill_add' %}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Ajouter une compétence
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

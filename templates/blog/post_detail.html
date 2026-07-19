@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ post.title }} - YAN GOETHALS{% endblock %}
+
+{% block content %}
+<section class="blog-detail-section py-5">
+    <div class="container">
+        <nav aria-label="breadcrumb" data-aos="fade-up">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'core:home' %}">Accueil</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'blog:post_list' %}">Blog</a></li>
+                <li class="breadcrumb-item active">{{ post.title }}</li>
+            </ol>
+        </nav>
+        
+        <div class="row">
+            <div class="col-lg-8" data-aos="fade-right">
+                <h1 class="display-4 mb-3">{{ post.title }}</h1>
+                
+                <div class="blog-meta mb-4">
+                    <span class="badge bg-primary">{{ post.category }}</span>
+                    <span class="text-muted ms-2">
+                        <i class="fas fa-user"></i> {{ post.author.get_full_name|default:post.author.username }}
+                    </span>
+                    <span class="text-muted ms-2">
+                        <i class="fas fa-calendar"></i> {{ post.published_at|date:"d/m/Y" }}
+                    </span>
+                    <span class="text-muted ms-2">
+                        <i class="fas fa-eye"></i> {{ post.views }} vues
+                    </span>
+                </div>
+                
+                {% if post.featured_image %}
+                    <img src="{{ post.featured_image.url }}" alt="{{ post.title }}" class="img-fluid rounded shadow-lg mb-4">
+                {% endif %}
+                
+                <div class="blog-content">
+                    {{ post.content|safe }}
+                </div>
+                
+                {% if post.tags %}
+                    <div class="blog-tags mt-4">
+                        <h6>Tags :</h6>
+                        {% for tag in post.tags.split %}
+                            <span class="badge bg-secondary me-1">#{{ tag }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="col-lg-4" data-aos="fade-left">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="fas fa-info-circle"></i> Informations</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                <i class="fas fa-user"></i>
+                                <strong>Auteur :</strong> {{ post.author.get_full_name|default:post.author.username }}
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-calendar-alt"></i>
+                                <strong>Publié le :</strong> {{ post.published_at|date:"d/m/Y" }}
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-eye"></i>
+                                <strong>Vues :</strong> {{ post.views }}
+                            </li>
+                            <li>
+                                <i class="fas fa-edit"></i>
+                                <strong>Mis à jour :</strong> {{ post.updated_at|date:"d/m/Y" }}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Actions admin -->
+                {% if user.is_authenticated %}
+                    <div class="card shadow mt-3">
+                        <div class="card-header bg-warning">
+                            <h5 class="mb-0"><i class="fas fa-cog"></i> Administration</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-grid gap-2">
+                                <a href="{% url 'admin:blog_post_change' post.id %}" class="btn btn-warning">
+                                    <i class="fas fa-edit"></i> Modifier
+                                </a>
+                                <a href="{% url 'admin:blog_post_delete' post.id %}" class="btn btn-danger">
+                                    <i class="fas fa-trash"></i> Supprimer
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

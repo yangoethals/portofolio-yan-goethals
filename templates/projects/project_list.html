@@ -1,0 +1,145 @@
+{% extends 'client/base.html' %}
+{% load static %}
+
+{% block title %}Projets - YAN GOETHALS{% endblock %}
+
+{% block content %}
+<section class="projects-section py-5">
+    <div class="container">
+        <h1 class="text-center mb-5" data-aos="fade-up">
+            <i class="fas fa-project-diagram"></i> Mes Projets
+        </h1>
+        
+        <!-- Filtres par technologie -->
+        <div class="row mb-4" data-aos="fade-up">
+            <div class="col-12">
+                <div class="filter-section">
+                    <h5 class="mb-3">Filtrer par technologie :</h5>
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="{% url 'projects:project_list' %}" class="btn btn-outline-primary btn-sm {% if not request.GET.tech %}active{% endif %}">
+                            Tous
+                        </a>
+                        {% for tech in tech_stack %}
+                            <a href="?tech={{ tech.name }}" class="btn btn-outline-primary btn-sm {% if request.GET.tech == tech.name %}active{% endif %}">
+                                <i class="{{ tech.icon }}"></i> {{ tech.name }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Liste des projets -->
+        <div class="row g-4">
+            {% for project in projects %}
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="{{ forloop.counter|add:'50' }}">
+                    <div class="project-card">
+                        <div class="project-card-image">
+                            {% if project.image %}
+                                <img src="{{ project.image.url }}" alt="{{ project.title }}" class="img-fluid">
+                            {% else %}
+                                <img src="{% static 'img/project-placeholder.jpg' %}" alt="{{ project.title }}" class="img-fluid">
+                            {% endif %}
+                            <div class="project-overlay">
+                                <div class="project-actions">
+                                    <a href="{% url 'projects:project_detail' project.id %}" class="btn btn-light btn-sm">
+                                        <i class="fas fa-eye"></i> Détails
+                                    </a>
+                                </div>
+                            </div>
+                            {% if project.status == 'completed' %}
+                                <span class="badge bg-success position-absolute top-0 end-0 m-2">Terminé</span>
+                            {% elif project.status == 'in_progress' %}
+                                <span class="badge bg-warning position-absolute top-0 end-0 m-2">En cours</span>
+                            {% else %}
+                                <span class="badge bg-info position-absolute top-0 end-0 m-2">Planifié</span>
+                            {% endif %}
+                        </div>
+                        <div class="project-card-body">
+                            <h5>{{ project.title }}</h5>
+                            <p class="text-muted">{{ project.short_description|truncatewords:15 }}</p>
+                            <div class="tech-tags">
+                                {% for tech in project.technologies.all|slice:":3" %}
+                                    <span class="badge bg-secondary">{{ tech.name }}</span>
+                                {% endfor %}
+                                {% if project.technologies.count > 3 %}
+                                    <span class="badge bg-secondary">+{{ project.technologies.count|add:"-3" }}</span>
+                                {% endif %}
+                            </div>
+                            <div class="mt-2">
+                                <a href="{% url 'projects:project_detail' project.id %}" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-eye"></i> Voir
+                                </a>
+                                <!-- Actions admin : visibles uniquement si superutilisateur -->
+                                {% if user.is_authenticated and user.is_superuser %}
+                                    <a href="{% url 'projects:project_update' project.id %}" class="btn btn-warning btn-sm">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="{% url 'projects:project_delete' project.id %}" class="btn btn-danger btn-sm">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12 text-center">
+                    <p class="text-muted">Aucun projet disponible</p>
+                    {% if user.is_authenticated and user.is_superuser %}
+                        <a href="{% url 'projects:project_create' %}" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Ajouter un projet
+                        </a>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Pagination -->
+        {% if is_paginated %}
+            <div class="row mt-4" data-aos="fade-up">
+                <div class="col-12">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-center">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.tech %}&tech={{ request.GET.tech }}{% endif %}">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            
+                            {% for num in page_obj.paginator.page_range %}
+                                {% if page_obj.number == num %}
+                                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ num }}{% if request.GET.tech %}&tech={{ request.GET.tech }}{% endif %}">{{ num }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.tech %}&tech={{ request.GET.tech }}{% endif %}">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        {% endif %}
+        
+        <!-- Bouton ajouter projet (visible uniquement pour les admins) -->
+        {% if user.is_authenticated and user.is_superuser %}
+            <div class="text-center mt-4" data-aos="fade-up">
+                <a href="{% url 'projects:project_create' %}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-plus"></i> Ajouter un projet
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

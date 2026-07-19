@@ -1,0 +1,28 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}Supprimer le badge - YAN GOETHALS{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-danger text-white">
+                <h5><i class="fas fa-exclamation-triangle"></i> Confirmer la suppression</h5>
+            </div>
+            <div class="card-body text-center">
+                <p>Êtes-vous sûr de vouloir supprimer le badge <strong>"{{ object.name }}"</strong> ?</p>
+                <p class="text-muted">Cette action est irréversible.</p>
+                <form method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> Supprimer
+                    </button>
+                    <a href="{% url 'core_admin:badge_list' %}" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> Annuler
+                    </a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
