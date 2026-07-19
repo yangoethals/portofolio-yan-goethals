@@ -2,6 +2,9 @@
 
 echo "🔨 Build du portfolio pour Render..."
 
+# Afficher la version de Python
+python --version
+
 # Mettre à jour pip
 pip install --upgrade pip
 
