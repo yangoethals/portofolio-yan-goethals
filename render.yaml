@@ -1,10 +1,11 @@
 services:
   - type: web
-    name: portfolio-yan-goethals
-    runtime: docker
+    name: yan-goethals
+    runtime: python
     plan: free
     autoDeploy: true
-    dockerfilePath: ./Dockerfile
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn portfolio_project.wsgi:application"
     envVars:
       - key: DATABASE_URL
         fromDatabase:
@@ -20,6 +21,8 @@ services:
         value: false
       - key: ALLOWED_HOSTS
         value: .onrender.com
+      - key: PIP_INDEX_URL
+        value: https://pypi.org/simple
 
 databases:
   - name: portfolio-db
