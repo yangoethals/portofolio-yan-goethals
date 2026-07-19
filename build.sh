@@ -6,8 +6,10 @@ echo "🔨 Build du portfolio pour Render..."
 echo "Version Python utilisée :"
 python --version
 
-# Installer les dépendances
+# Mettre à jour pip
 pip install --upgrade pip
+
+# Installer les dépendances
 pip install -r requirements.txt
 
 # Collecter les fichiers statiques
