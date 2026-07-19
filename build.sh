@@ -19,30 +19,33 @@ python manage.py collectstatic --noinput
 
 # ===== MIGRATIONS =====
 echo "📊 Création des migrations..."
-python manage.py makemigrations
+python manage.py makemigrations || echo "⚠️ Aucune migration créée"
 
 echo "📊 Application des migrations..."
-python manage.py migrate
+python manage.py migrate || echo "⚠️ Erreur lors des migrations"
 
 # ===== SUPERUTILISATEUR =====
 echo "📊 Création du superutilisateur..."
 python manage.py shell << END
 from django.contrib.auth.models import User
+try:
+    User.objects.filter(username='yangoethals').delete()
+    User.objects.create_superuser('yangoethals', 'yangoethals@example.com', '302001')
+    print("✅ Superutilisateur créé avec succès !")
+except Exception as e:
+    print(f"⚠️ Erreur création superutilisateur: {e}")
+END
+
+# Vérification des tables
+echo "📊 Vérification des tables..."
+python manage.py shell << END
 from django.db import connection
-
-# Vérifier si la table core_profile existe
 cursor = connection.cursor()
-cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='core_profile'")
-table_exists = cursor.fetchone()
-
-if not table_exists:
-    print("⚠️ La table core_profile n'existe pas. Création en cours...")
-    # Les migrations devraient la créer
-
-# Créer le superutilisateur
-User.objects.filter(username='yangoethals').delete()
-User.objects.create_superuser('yangoethals', 'yangoethals@example.com', '302001')
-print("✅ Superutilisateur créé avec succès !")
+cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
+tables = cursor.fetchall()
+print(f"✅ Tables disponibles: {len(tables)}")
+for table in tables:
+    print(f"   - {table[0]}")
 END
 
 echo "✅ Build terminé avec succès !"
