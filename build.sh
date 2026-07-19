@@ -2,14 +2,11 @@
 
 echo "🔨 Build du portfolio pour Render..."
 
-# Afficher la version de Python
-echo "Version Python utilisée :"
+# Vérifier la version de Python
 python --version
 
-# Mettre à jour pip
-pip install --upgrade pip
-
 # Installer les dépendances
+pip install --upgrade pip
 pip install -r requirements.txt
 
 # Collecter les fichiers statiques

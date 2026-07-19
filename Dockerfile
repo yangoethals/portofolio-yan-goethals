@@ -1,4 +1,3 @@
-# Utiliser Python 3.12 officiel
 FROM python:3.12-slim
 
 # Définir le répertoire de travail
@@ -10,13 +9,14 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Copier les fichiers requirements
+# Copier les dépendances
 COPY requirements.txt .
 
 # Installer les dépendances Python
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
 
-# Copier le reste du projet
+# Copier le code source
 COPY . .
 
 # Collecter les fichiers statiques
