@@ -1,13 +1,11 @@
 services:
   - type: web
     name: portfolio-yan-goethals
-    runtime: image
+    runtime: python
     plan: free
     autoDeploy: true
-    image:
-      url: portfolio-yan-goethals
-    buildCommand: "docker build -t portfolio-yan-goethals ."
-    startCommand: "gunicorn portfolio_project.wsgi:application --bind 0.0.0.0:8000"
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn portfolio_project.wsgi:application"
     envVars:
       - key: DATABASE_URL
         fromDatabase:
@@ -17,6 +15,14 @@ services:
         generateValue: true
       - key: WEB_CONCURRENCY
         value: 4
+      - key: RENDER
+        value: true
+      - key: DEBUG
+        value: false
+      - key: ALLOWED_HOSTS
+        value: .onrender.com
+      - key: PYTHON_VERSION
+        value: "3.12.3"
 
 databases:
   - name: portfolio-db
